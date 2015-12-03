@@ -59,11 +59,11 @@ Controller for the discover page
     return '';
   }
 
-  // Skip or favourite songs
+  // Skip or favorite songs
   $scope.sendFeedback = function(bool) {
 
-    // Firstly, add to favourites if they favourited
-    if (bool) User.addSongToFavourites($scope.currentSong);
+    // Firstly, add to favorites if they favorited
+    if (bool) User.addSongToFavorites($scope.currentSong);
 
     // Set variable for the correct animation sequence
     $scope.currentSong.rated = bool;
@@ -95,26 +95,26 @@ Controller for the favorites page
     $window.open(song.open_url, "_system");
   }
 
-  $scope.favourites = User.favourites;
+  $scope.favorites = User.favorites;
 
   $scope.removeSong = function(song, index) {
-    User.removeSongFromFavourites(song, index);
+    User.removeSongFromFavorites(song, index);
   };
 })
 
 /*
 Controller for our tab bar
 */
-.controller('TabsCtrl', function($scope, Recommendations, User) {
-  $scope.favCount = User.favouriteCount;
+.controller('TabsCtrl', function($scope, $window, Recommendations, User) {
+  $scope.favCount = User.favoriteCount;
 
-  $scope.enteringFavourites = function() {
-    // Reset new favourites to 0 when we enter favourites tab.
-    User.newFavourites = 0;
+  $scope.enteringFavorites = function() {
+    // Reset new favorites to 0 when we enter favorites tab.
+    User.newFavorites = 0;
     Recommendations.haltAudio();
   }
 
-  $scope.leavingFavourites = function() {
+  $scope.leavingFavorites = function() {
     Recommendations.init();
   }
 
