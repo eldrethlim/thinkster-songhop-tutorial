@@ -65,8 +65,8 @@ angular.module('songhop.services', ['ionic.utils'])
   var o = {
     username: false,
     session_id: false,
-    favourites: [],
-    newFavourites: 0 
+    favorites: [],
+    newFavorites: 0 
   }
 
   // Authentication
@@ -82,15 +82,15 @@ angular.module('songhop.services', ['ionic.utils'])
   return $http.post(SERVER.url + '/' + authRoute, { username: username }).
     success(function(data) {
       debugger
-      o.setSession(data.username, data.session_id, data.favourites);
+      o.setSession(data.username, data.session_id, data.favorites);
     });
   }
 
   // Set session data
-  o.setSession = function(username, session_id, favourites) {
+  o.setSession = function(username, session_id, favorites) {
     if (username) o.username = username;
     if (session_id) o.session_id = session_id;
-    if (favourites) o.favourites = favourites;
+    if (favorites) o.favorites = favorites;
 
     // Set data in
     $localstorage.setObject('user', { username: username, session_id: session_id });
@@ -108,9 +108,9 @@ angular.module('songhop.services', ['ionic.utils'])
       var user = $localstorage.getObject('user');
 
       if (user.username) {
-        // If there's a user, lets grab their favourites from the server
+        // If there's a user, lets grab their favorites from the server
         o.setSession(user.username, user.session_id);
-        o.populateFavourites().then(function() {
+        o.populateFavorites().then(function() {
           defer.resolve(true);
         });
       } else {
@@ -127,30 +127,30 @@ angular.module('songhop.services', ['ionic.utils'])
     $localstorage.setObject('user', {});
     o.username = false;
     o.session_id = false;
-    o.favourites = [];
-    o.newFavourites = 0;
+    o.favorites = [];
+    o.newFavorites = 0;
   }
 
-  o.addSongToFavourites = function(song) {
+  o.addSongToFavorites = function(song) {
     // make sure there's a song to add
     if (!song) return false;
 
-    // add to favourites array
-    o.favourites.unshift(song);
-    o.newFavourites++;
+    // add to favorites array
+    o.favorites.unshift(song);
+    o.newFavorites++;
 
-    // persist song favouriting to server
+    // persist song favoriting to server
     return $http.post(SERVER.url + '/favorites', { session_id: o.session_id, song_id: song.song_id });
   }
 
-  o.removeSongFromFavourites = function(song,index) {
+  o.removeSongFromFavorites = function(song,index) {
     // make sure there's a song to remove
     if (!song) return false;
 
-    // remove from favourites array
-    o.favourites.splice(index, 1);
+    // remove from favorites array
+    o.favorites.splice(index, 1);
 
-    // persist song unfavouriting to server
+    // persist song unfavoriting to server
     return $http({
       method: 'DELETE',
       url: SERVER.url + '/favorites',
@@ -158,19 +158,19 @@ angular.module('songhop.services', ['ionic.utils'])
     });
   }
 
-  o.populateFavourites = function() {
+  o.populateFavorites = function() {
     return $http({
       method: 'GET',
       url: SERVER.url + '/favorites',
       params: { session_id: o.session_id }
     }).success(function(data) {
       // merge data into the queue
-      o.favourites = data;
+      o.favorites = data;
     });
   }
 
-  o.favouriteCount = function() {
-    return o.newFavourites;
+  o.favoriteCount = function() {
+    return o.newFavorites;
   }
 
   return o;
